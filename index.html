@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis PAI & Budi Pekerti Kelas X | Fastabiqul Khairat hingga Sumber Hukum Islam</title>
+    <style>
+        :root {
+            --primary: #0f766e;
+            --primary-light: #14b8a6;
+            --bg: #f0fdfa;
+            --card: #ffffff;
+            --text: #134e4a;
+            --correct: #16a34a;
+            --wrong: #dc2626;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 700px;
+            width: 100%;
+        }
+        h1 { color: var(--primary); text-align: center; font-size: 1.5rem; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 20px; font-size: 0.9rem; }
+        .progress-bar {
+            width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px; margin-bottom: 20px; overflow: hidden;
+        }
+        .progress {
+            height: 100%; background: var(--primary-light); width: 0%; transition: width 0.3s;
+        }
+        .question-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; line-height: 1.5; }
+        .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .option {
+            padding: 12px 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s;
+        }
+        .option:hover { border-color: var(--primary-light); background: #f8fafc; }
+        .option.selected { border-color: var(--primary); background: #ccfbf1; font-weight: 600; }
+        .option.correct { border-color: var(--correct); background: #dcfce7; }
+        .option.wrong { border-color: var(--wrong); background: #fee2e2; }
+        .btn {
+            background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; width: 100%;
+        }
+        .btn:hover { background: #115e59; }
+        .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+        .explanation { margin-top: 15px; padding: 10px; background: #f1f5f9; border-left: 4px solid var(--primary); border-radius: 4px; font-size: 0.9rem; display: none; }
+        .result-screen { text-align: center; display: none; }
+        .score { font-size: 3rem; font-weight: bold; color: var(--primary); }
+        .input-group { margin-bottom: 20px; }
+        .input-group input { width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="start-screen">
+        <h1>📖 Kuis PAI & Budi Pekerti Kelas X</h1>
+        <p class="subtitle">Menguji pemahaman Bab I - IV: Fastabiqul Khairat, Syu'abul Iman, Akhlak Mazmumah, dan Sumber Hukum Islam.</p>
+        <div class="input-group">
+            <input type="text" id="studentName" placeholder="Masukkan Nama Lengkap Anda..." required>
+        </div>
+        <button class="btn" onclick="startQuiz()">Mulai Kuis (30 Soal)</button>
+    </div>
+
+    <div id="quiz-screen" style="display:none;">
+        <div class="progress-bar"><div class="progress" id="progress"></div></div>
+        <div id="question-container">
+            <div class="question-text" id="question-text"></div>
+            <div class="options" id="options-container"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <button class="btn" id="next-btn" onclick="nextQuestion()" disabled>Lanjut</button>
+    </div>
+
+    <div id="result-screen" class="result-screen">
+        <h1>🎉 Kuis Selesai!</h1>
+        <p>Skor Anda:</p>
+        <div class="score" id="final-score"></div>
+        <p id="result-message"></p>
+        <button class="btn" onclick="location.reload()" style="margin-top:20px;">Ulangi Kuis</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "Apa arti dari istilah Fastabiqul Khairat?", o: ["Persaingan untuk menang", "Berlomba-lomba dalam kebaikan", "Menunda amal saleh", "Menghalalkan segala cara"], a: 1, e: "Fastabiqul khairat berarti berlomba-lomba dalam kebaikan, bersegera melakukan amal saleh tanpa menjatuhkan orang lain." },
+        { q: "Q.S. Al-Maidah [5]: 48 memerintahkan manusia untuk...", o: ["Saling bermusuhan karena perbedaan", "Berlomba-lomba dalam kebaikan dan kembali kepada Allah", "Mengumpulkan harta sebanyak-banyaknya", "Menghindari persaingan sosial"], a: 1, e: "Ayat ini mengajarkan bahwa perbedaan keadaan seharusnya mendorong berbuat baik, karena akhirnya semua kembali kepada Allah." },
+        { q: "Hadis riwayat Bukhari no. 5027 menyatakan bahwa sebaik-baik manusia adalah orang yang...", o: ["Memiliki harta paling banyak", "Belajar Al-Qur'an dan mengajarkannya", "Memiliki jabatan tertinggi", "Berpuasa setiap hari"], a: 1, e: "Ilmu dan mengajarkan Al-Qur'an adalah salah satu jalan utama berlomba dalam kebaikan." },
+        { q: "Dalam konteks globalisasi dan ruang digital, penerapan fastabiqul khairat yang tepat adalah...", o: ["Membuat konten untuk menjatuhkan lawan", "Menyebarkan ujaran kebencian", "Menyebarkan informasi benar dan membuat konten bermanfaat", "Menggunakan media sosial untuk pamer"], a: 2, e: "Di era digital, kompetisi kebaikan dilakukan dengan menyebarkan manfaat, menghindari hoaks, dan tidak merendahkan orang lain." },
+        { q: "Syu'abul iman berarti cabang-cabang keimanan. Menurut hadis, cabang iman yang tertinggi adalah...", o: ["Menyingkirkan gangguan dari jalan", "Mengucapkan kalimat tauhid", "Membantu tetangga", "Rasa malu"], a: 1, e: "Cabang tertinggi iman adalah mengucapkan Laa ilaaha illallah (kalimat tauhid), sedangkan terendah adalah menyingkirkan gangguan dari jalan." },
+        { q: "Mahabbah kepada Allah SWT dibuktikan dengan cara...", o: ["Mengikuti ajaran Rasulullah saw.", "Mengisolasi diri dari masyarakat", "Menimbun harta untuk amal", "Hanya berdzikir tanpa bekerja"], a: 0, e: "Q.S. Ali 'Imran [3]: 31 menegaskan bahwa bukti cinta kepada Allah adalah mengikuti petunjuk Rasulullah saw." },
+        { q: "Khauf (takut kepada Allah) harus berjalan seimbang dengan...", o: ["Putus asa dari rahmat Allah", "Raja' (harapan terhadap ampunan dan kasih sayang-Nya)", "Takabur (kesombongan)", "Hasad (dengki)"], a: 1, e: "Khauf tidak boleh membuat putus asa, melainkan harus seimbang dengan raja' (harapan) akan rahmat Allah." },
+        { q: "Sikap seorang pelajar yang mencerminkan 'Khauf' saat menghadapi ujian adalah...", o: ["Menyontek karena takut tidak lulus", "Berdoa lalu pasrah tanpa belajar", "Menolak menyontek dan berhati-hati berbuat curang", "Meminta jawaban kepada teman"], a: 2, e: "Khauf mendorong seseorang menjauhi larangan (kecurangan) dan menjaga amanah meskipun tidak diawasi." },
+        { q: "Menurut HR. Muslim no. 34, orang yang ridha kepada Allah sebagai Tuhan, Islam sebagai agama, dan Muhammad sebagai rasul akan merasakan...", o: ["Kekayaan dunia", "Manisnya iman", "Kekuasaan politik", "Pujian manusia"], a: 1, e: "Ridha terhadap dasar keimanan akan mendatangkan ketenangan dan manisnya iman." },
+        { q: "Perilaku menggunakan sesuatu secara berlebihan sehingga melampaui batas kewajaran disebut...", o: ["Tabzir", "Israf", "Riya", "Hasad"], a: 1, e: "Israf adalah melampaui batas/berlebihan. Sedangkan Tabzir adalah menghambur-hamburkan/menyia-nyiakan harta." },
+        { q: "Q.S. Al-A'raf [7]: 31 memberikan peringatan agar kita tidak...", o: ["Berlomba dalam kebaikan", "Berlebihan (israf) dalam makan dan minum", "Bersedekah secara diam-diam", "Bekerja keras mencari nafkah"], a: 1, e: "Ayat ini mengajarkan keseimbangan dalam menikmati nikmat Allah dan larangan bersikap israf." },
+        { q: "Melakukan amal ibadah dengan tujuan agar dilihat dan dipuji manusia disebut...", o: ["Sum'ah", "Riya", "Takabur", "Israf"], a: 1, e: "Riya berasal dari kata 'melihat', yaitu beramal agar dilihat manusia. Sum'ah berasal dari kata 'mendengar'." },
+        { q: "Perbedaan mendasar antara Riya dan Sum'ah adalah...", o: ["Riya berkaitan dengan harta, Sum'ah dengan waktu", "Riya ingin dilihat, Sum'ah ingin didengar/diketahui", "Riya dilakukan di masjid, Sum'ah di media sosial", "Riya dosa besar, Sum'ah dosa kecil"], a: 1, e: "Riya menekankan amal yang ingin dilihat, sedangkan sum'ah menekankan amal yang ingin didengar atau diketahui orang lain." },
+        { q: "Menurut HR. Muslim no. 91, hakikat kesombongan (takabur) adalah...", o: ["Memiliki banyak prestasi", "Menolak kebenaran dan merendahkan manusia", "Berjalan dengan cepat", "Menyukai pakaian bagus"], a: 1, e: "Rasulullah saw. menjelaskan bahwa kesombongan adalah menolak kebenaran dan merendahkan orang lain." },
+        { q: "Dalam konteks kebhinnekaan dan persatuan, sikap Takabur sangat berbahaya karena...", o: ["Membuat seseorang menjadi kaya", "Menimbulkan konflik dan merendahkan perbedaan", "Mendorong seseorang untuk berlomba dalam kebaikan", "Membuat seseorang disukai banyak orang"], a: 1, e: "Takabur merusak persatuan karena membuat seseorang merasa lebih unggul dan merendahkan kelompok/suku/agama lain." },
+        { q: "Hasad adalah...", o: ["Ingin mendapat nikmat serupa tanpa berharap nikmat orang lain hilang", "Dengki dan menginginkan nikmat orang lain hilang", "Bangga dengan prestasi sendiri", "Menghamburkan harta"], a: 1, e: "Hasad adalah dengki. Jika ingin kebaikan serupa tanpa berharap nikmat orang lain hilang, itu disebut Ghibtah." },
+        { q: "Q.S. Al-Falaq [113]: 5 memerintahkan kita berlindung dari kejahatan orang yang...", o: ["Berjalan di bumi dengan angkuh", "Dengki apabila ia dengki", "Berlebihan dalam makan", "Lalai dalam salatnya"], a: 1, e: "Ayat ini secara spesifik memperingatkan bahaya dan kejahatan dari sifat hasad (dengki)." },
+        { q: "Hadis tentang 'segumpal daging' yang jika baik maka baiklah seluruh tubuh, merujuk pada pentingnya menjaga...", o: ["Kesehatan fisik", "Hati (Niat dan Akhlak)", "Kekayaan harta", "Kecerdasan otak"], a: 1, e: "Hadis riwayat Bukhari & Muslim ini menegaskan bahwa hati adalah pusat kendali akhlak dan niat seseorang." },
+        { q: "Dalam hukum Islam, perbuatan yang akan mendapat dosa jika ditinggalkan tanpa alasan yang dibenarkan disebut hukum...", o: ["Sunah", "Makruh", "Wajib", "Mubah"], a: 2, e: "Wajib harus dilaksanakan, meninggalkan tanpa alasan syar'i berdosa." },
+        { q: "Secara istilah, Al-Qur'an adalah kalam Allah yang membacanya bernilai...", o: ["Pahala sunah", "Ibadah", "Pekerjaan sosial", "Kewajiban kifayah"], a: 1, e: "Membaca Al-Qur'an secara harfiah dan istilah bernilai ibadah." },
+        { q: "Salah satu fungsi Al-Qur'an adalah 'Al-Furqan', yang artinya...", o: ["Penenteram hati", "Pembeda antara kebenaran dan kebatilan", "Pedoman ekonomi", "Kitab penyembuh"], a: 1, e: "Al-Furqan berarti pembeda (antara yang hak dan batil)." },
+        { q: "Fungsi hadis yang menjelaskan dan merinci ayat-ayat Al-Qur'an yang masih global disebut...", o: ["Bayan at-taqrir", "Bayan at-tafsir", "Bayan at-tasyri'", "Bayan at-tasdjid"], a: 1, e: "Bayan at-tafsir berfungsi menjelaskan/merinci. Bayan at-taqrir menguatkan, bayan at-tasyri' menetapkan hukum baru." },
+        { q: "Hadis yang berupa persetujuan Rasulullah saw. terhadap perkataan atau perbuatan sahabat disebut...", o: ["Qauliyah", "Fi'liyah", "Taqririyah", "Sifat"], a: 2, e: "Taqririyah adalah persetujuan beliau (diamnya beliau menandakan persetujuan)." },
+        { q: "Hadis yang tidak memenuhi satu atau lebih persyaratan sahih atau hasan disebut hadis...", o: ["Maudu'", "Hasan", "Daif", "Mutawatir"], a: 2, e: "Daif (lemah). Maudu' adalah hadis palsu yang dibuat-buat." },
+        { q: "Ijtihad dalam Islam dilakukan ketika menghadapi persoalan yang...", o: ["Sudah dijelaskan secara rinci di Al-Qur'an", "Belum disebutkan secara eksplisit dan membutuhkan kajian dalil", "Tidak ada hubungannya dengan agama", "Hanya terjadi di masa lalu"], a: 1, e: "Ijtihad dibutuhkan untuk persoalan kontemporer/baru yang tidak dibahas eksplisit dalam nash." },
+        { q: "Kesepakatan para mujtahid pada suatu masa setelah wafatnya Rasulullah mengenai hukum syariat disebut...", o: ["Qiyas", "Istihsan", "Ijma'", "'Urf"], a: 2, e: "Ijma' adalah kesepakatan ulama/mujtahid." },
+        { q: "Metode ijtihad dengan cara menganalogikan kasus baru dengan kasus lama yang memiliki kesamaan alasan hukum (illat) disebut...", o: ["Ijma'", "Qiyas", "Maslahah Mursalah", "Istihsan"], a: 1, e: "Qiyas adalah analogi berdasarkan kesamaan illat/alasan hukum." },
+        { q: "Contoh persoalan kontemporer yang membutuhkan ijtihad di era globalisasi saat ini adalah...", o: ["Tata cara salat lima waktu", "Transaksi keuangan digital dan teknologi medis", "Puasa di bulan Ramadan", "Zakat fitrah"], a: 1, e: "Persoalan baru seperti e-wallet, kripto, transplantasi organ, dll membutuhkan ijtihad ulama kontemporer." },
+        { q: "Menghadapi perbedaan pendapat ulama dalam persoalan fikih (iqtihadiyah), sikap seorang muslim yang mencerminkan persatuan adalah...", o: ["Saling menyalahkan dan mengkafirkan", "Saling menghormati dan tidak mudah menyalahkan", "Mengikuti pendapat yang paling keras", "Meninggalkan agama"], a: 1, e: "Perbedaan ijtihad harus disikapi dengan tasamuh (saling menghormati) demi menjaga ukhuwah dan persatuan." },
+        { q: "Manfaat menghindari akhlak tercela (israf, riya, takabur, hasad) bagi kehidupan bermasyarakat yang majemuk adalah...", o: ["Memperkuat persaudaraan dan menciptakan ketenangan sosial", "Membuat seseorang menjadi kaya raya", "Mendapatkan pujian dari tokoh masyarakat", "Menghilangkan semua perbedaan suku"], a: 0, e: "Menghindari hasad dan takabur akan menghilangkan iri, menciptakan hati yang tenang, dan memperkuat persaudaraan (ukhuwah) di tengah keberagaman." }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let studentName = "";
+    let selectedOption = null;
+
+    function startQuiz() {
+        studentName = document.getElementById('studentName').value.trim();
+        if (!studentName) { alert("Mohon masukkan nama Anda terlebih dahulu!"); return; }
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const q = questions[currentQuestion];
+        document.getElementById('question-text').innerText = `${currentQuestion + 1}. ${q.q}`;
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        
+        q.o.forEach((opt, index) => {
+            const div = document.createElement('div');
+            div.className = 'option';
+            div.innerText = opt;
+            div.onclick = () => selectOption(div, index);
+            optionsContainer.appendChild(div);
+        });
+
+        document.getElementById('explanation').style.display = 'none';
+        document.getElementById('next-btn').disabled = true;
+        document.getElementById('next-btn').innerText = currentQuestion === questions.length - 1 ? "Lihat Hasil" : "Lanjut";
+        document.getElementById('progress').style.width = `${((currentQuestion) / questions.length) * 100}%`;
+        selectedOption = null;
+    }
+
+    function selectOption(div, index) {
+        if (document.querySelector('.option.selected')) return; // Prevent changing answer
+        const options = document.querySelectorAll('.option');
+        options.forEach(opt => opt.classList.remove('selected'));
+        div.classList.add('selected');
+        selectedOption = index;
+        
+        // Show feedback
+        const q = questions[currentQuestion];
+        options.forEach((opt, i) => {
+            if (i === q.a) opt.classList.add('correct');
+            else if (i === index && i !== q.a) opt.classList.add('wrong');
+        });
+        
+        document.getElementById('explanation').innerText = `💡 Pembahasan: ${q.e}`;
+        document.getElementById('explanation').style.display = 'block';
+        document.getElementById('next-btn').disabled = false;
+        
+        if (index === q.a) score++;
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        const percentage = Math.round((score / questions.length) * 100);
+        document.getElementById('final-score').innerText = `${score} / ${questions.length} (${percentage}%)`;
+        
+        let msg = "";
+        if (percentage >= 80) msg = `Masya Allah, Luar Biasa ${studentName}! Pemahaman Anda tentang materi PAI, etika digital, dan kebhinnekaan sangat baik.`;
+        else if (percentage >= 60) msg = `Bagus ${studentName}! Terus tingkatkan pemahaman Anda tentang akhlak dan sumber hukum Islam.`;
+        else msg = `Tetap semangat ${studentName}! Baca ulang handbook dan diskusikan dengan guru untuk hasil yang lebih baik.`;
+        
+        document.getElementById('result-message').innerText = msg;
+    }
+</script>
+</body>
+</html>
